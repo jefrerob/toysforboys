@@ -1,26 +1,24 @@
 package be.vdab.toysforboys.domain;
 
-
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "countries")
-public class Country {
+@Table(name = "productLines")
+public class ProductLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    private String description;
     @Version
     private int version;
 
-    protected Country(){}
+    protected ProductLine(){}
 
-    public Country(String name) {
+    public ProductLine(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
     public long getId() {
@@ -31,12 +29,16 @@ public class Country {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Country)) return false;
-        Country country = (Country) o;
-        return Objects.equals(name.toUpperCase(), country.name.toUpperCase());
+        if (!(o instanceof ProductLine)) return false;
+        ProductLine that = (ProductLine) o;
+        return Objects.equals(name.toUpperCase(), that.name.toUpperCase());
     }
 
     @Override
