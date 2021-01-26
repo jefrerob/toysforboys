@@ -2,6 +2,7 @@ package be.vdab.toysforboys.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -21,4 +22,63 @@ public class Product {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "productlineid")
     private ProductLine productLine;
+    @Version
+    private int version;
+
+    protected Product(){}
+
+    public Product(String name, String scale, String description, int inStock, int inOrder, BigDecimal price, ProductLine productLine) {
+        this.name = name;
+        this.scale = scale;
+        this.description = description;
+        this.inStock = inStock;
+        this.inOrder = inOrder;
+        this.price = price;
+        this.productLine = productLine;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getScale() {
+        return scale;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getInStock() {
+        return inStock;
+    }
+
+    public int getInOrder() {
+        return inOrder;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public ProductLine getProductLine() {
+        return productLine;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+        Product product = (Product) o;
+        return Objects.equals(name.toUpperCase(), product.name.toUpperCase());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name.toUpperCase());
+    }
 }
