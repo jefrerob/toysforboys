@@ -23,7 +23,7 @@ public class Customer {
     private Country country;
     @OneToMany(mappedBy = "customer")
     @OrderBy("ordered")
-    private Set<Order> orders = new LinkedHashSet<>();
+    private Set<Order> orders;
     @Version
     private int version;
 
@@ -33,6 +33,7 @@ public class Customer {
         this.name = name;
         this.adres = adres;
         this.country = country;
+        this.orders = new LinkedHashSet<>();
     }
 
     public long getId() {
