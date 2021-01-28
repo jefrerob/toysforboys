@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title='Unshipped orders')"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<h1>Unshipped orders</h1>
+<div th:if="${orders.empty}">Je hebt geen orders om te shippen.</div>
+<form th:if="not ${orders.empty}" th:action="@{/placeholder}" method="post">
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Ordered</th>
+            <th>Required</th>
+            <th>Customer</th>
+            <th>Comments</th>
+            <th>Status</th>
+            <th>Ship</th>
+        </tr>
+
+        <tr th:each="order:${orders}" th:object="${order}">
+            <td align="right">
+                <a th:href="@{/order/{id}(id=*{id})}">
+                    <span th:text="*{id}"></span>
+                </a>
+            </td>
+            <td align="right" th:text="*{ordered}"></td>
+            <td align="right" th:text="*{required}"></td>
+            <td align="right" th:text="*{customer.name}"></td>
+            <td align="right" th:text="*{comments}"></td>
+            <td align="right" th:text="*{status}"></td>
+
+        </tr>
+
+    </table>
+
+</form>
+
+
+</body>
+</html>

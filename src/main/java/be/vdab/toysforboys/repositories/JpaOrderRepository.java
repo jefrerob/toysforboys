@@ -18,7 +18,9 @@ public class JpaOrderRepository implements OrderRepository{
 
     @Override
     public List<Order> findAllUnshippedOrders() {
-
+        return manager.createNamedQuery("Order.findAllUnshippedOrders", Order.class)
+                .setHint("javax.persistence.loadgraph", manager.createEntityGraph(Order.WITH_CUSTOMER))
+                .getResultList();
     }
 
 }

@@ -1,11 +1,11 @@
 package be.vdab.toysforboys.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Entity
 @Table(name = "orders")
@@ -76,17 +76,16 @@ public class Order {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return this.getOrderDetails().containsAll(order.getOrderDetails());
+        return id == order.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getOrderDetails());
+        return Objects.hash(id);
     }
 }

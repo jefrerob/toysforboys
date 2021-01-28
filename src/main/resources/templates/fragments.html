@@ -1,0 +1,12 @@
+<div xmlns:th="http://www.thymeleaf.org">
+    <nav th:fragment="menu">
+        <ul>
+            <li><a th:href="@{/}">Orders</a></li>
+        </ul>
+    </nav>
+    <head th:fragment="head(title)">
+        <link rel="icon" th:href="@{/images/toys.ico}" type="image/x-icon">
+        <title th:text="${title}"></title>
+        <link rel="stylesheet" th:href="@{/css/toysforboys.css}">
+    </head>
+</div>
