@@ -5,7 +5,9 @@
 <nav th:replace="fragments::menu"></nav>
 <h1>Unshipped orders</h1>
 <div th:if="${orders.empty}">Je hebt geen orders om te shippen.</div>
-<form th:if="not ${orders.empty}" th:action="@{/placeholder}" method="post">
+<form th:if="not ${orders.empty}" th:action="@{/orders/setorderstoshipped}" method="post">
+
+    <button>Set as shipped</button>
 
     <table>
 
@@ -25,11 +27,15 @@
                     <span th:text="*{id}"></span>
                 </a>
             </td>
-            <td align="right" th:text="*{ordered}"></td>
-            <td align="right" th:text="*{required}"></td>
-            <td align="right" th:text="*{customer.name}"></td>
-            <td align="right" th:text="*{comments}"></td>
-            <td align="right" th:text="*{status}"></td>
+            <td nowrap="nowrap" align="right" th:text="*{ordered}"></td>
+            <td nowrap="nowrap" align="right" th:text="*{required}"></td>
+            <td align="left" th:text="*{customer.name}"></td>
+            <td align="left" th:text="*{comments}"></td>
+            <td nowrap="nowrap">
+                <img th:src="@{/images/{status}.png(status=*{status})}">
+                <span th:text="*{status}"></span>
+            </td>
+            <td align="center"> <input th:field="${ordersToShipForm.orderIdsToShip}" type="checkbox" name="id" th:value="*{id}"> </td>
 
         </tr>
 

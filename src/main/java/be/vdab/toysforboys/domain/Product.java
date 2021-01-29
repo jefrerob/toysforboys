@@ -70,9 +70,6 @@ public class Product {
     }
 
     public void lowerInStockAndInOrder(int numberOrdered){
-        if (inOrder - numberOrdered < 0 || inStock - numberOrdered < 0){
-            throw new IllegalArgumentException("There is not enough in stock or in order for product: " + name);
-        }
         inOrder-= numberOrdered;
         inStock-=numberOrdered;
     }

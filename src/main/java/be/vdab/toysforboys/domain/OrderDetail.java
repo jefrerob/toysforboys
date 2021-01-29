@@ -36,7 +36,7 @@ public class OrderDetail {
     }
 
     public boolean isInStock() {
-        return ordered <= product.getInStock();
+        return ordered <= product.getInStock() && ordered <= product.getInOrder();
     }
 
     @Override

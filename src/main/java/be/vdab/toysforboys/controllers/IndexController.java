@@ -1,6 +1,7 @@
 package be.vdab.toysforboys.controllers;
 
 
+import be.vdab.toysforboys.forms.OrdersToShipForm;
 import be.vdab.toysforboys.services.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class IndexController {
 
     @GetMapping
     public ModelAndView orders() {
-        return new ModelAndView("index", "orders", orderService.findAllUnshippedOrders());
+        return new ModelAndView("index", "orders", orderService.findAllUnshippedOrders()).addObject(new OrdersToShipForm(null));
     }
 
 }
