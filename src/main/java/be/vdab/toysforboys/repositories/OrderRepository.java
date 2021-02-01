@@ -8,4 +8,5 @@ import java.util.Set;
 public interface OrderRepository {
     List<Order> findAllUnshippedOrders();
     List<Order> findOrdersByIds(Set<Long> ids);
+    Set<Long> shipOrders(List<Order> orders);
 }

@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import javax.persistence.EntityManager;
 
+import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +44,23 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
         var orders = repository.findAllUnshippedOrders();
         assertThat(orders).hasSize(super.countRowsInTableWhere(ORDERS, "status in('PROCESSING','WAITING','RESOLVED','DISPUTED')"))
                 .extracting(order->order.getId()).isSorted();
+    }
+
+    @Test
+    void findOrdersByIds() {
+        long id1 = idFromTestShippedOrder();
+        long id2 = idFromTestUnshippedOrder();
+        var orders = repository.findOrdersByIds(Set.of(id1, id2));
+        assertThat(repository.findOrdersByIds(Set.of(id1, id2))).extracting(order->order.getId()).containsOnly(id1, id2).isSorted();
+    }
+
+    @Test
+    void findOrdersByIdsGivesEmtySetOrdersWhenSearchingWithEmptySetOfIds() {
+        assertThat(repository.findOrdersByIds(Set.of())).isEmpty();
+    }
+    @Test
+    void findOrdersByIdsGivesEmtySetOrdersWhenSearchingWithUnexistingOrderIds() {
+        assertThat(repository.findOrdersByIds(Set.of(-1L))).isEmpty();
     }
 
 
