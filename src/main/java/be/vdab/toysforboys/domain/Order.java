@@ -71,6 +71,12 @@ public class Order {
         return status;
     }
 
+    public void setStatusToShippedAndShipDate(){
+        this.status = Status.SHIPPED;
+        this.shipped = LocalDate.now();
+    }
+
+
     public Set<OrderDetail> getOrderDetails() {
         return Collections.unmodifiableSet(orderDetails);
     }

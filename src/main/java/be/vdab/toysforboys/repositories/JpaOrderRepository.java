@@ -3,6 +3,7 @@ package be.vdab.toysforboys.repositories;
 
 import be.vdab.toysforboys.domain.Order;
 import be.vdab.toysforboys.domain.OrderDetail;
+import be.vdab.toysforboys.domain.Status;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -37,21 +38,31 @@ public class JpaOrderRepository implements OrderRepository{
     @Override
     public Set<Long> shipOrders(List<Order> orders) {
         Set<Long> failedToShipOrderIds = new LinkedHashSet<>();
+
         for (Order order : orders) {
+            Set<OrderDetail> orderDetails = order.getOrderDetails();
             boolean orderIsOk = true;
-            while (orderIsOk == true) {
-                for (OrderDetail orderDetail : order.getOrderDetails()) {
+            if (order.getStatus() == Status.CANCELLED || order.getStatus() == Status.SHIPPED || orderDetails.isEmpty()){
+                orderIsOk = false;
+            } else {
+                order.setStatusToShippedAndShipDate();
+                for (OrderDetail orderDetail : orderDetails) {
                     if (orderDetail.isInStock()) {
                         orderDetail.getProduct().lowerInStockAndInOrder(orderDetail.getOrdered());
                     } else {
-                        manager.getTransaction().rollback();
                         orderIsOk = false;
-                        failedToShipOrderIds.add(order.getId());
+                        break;
                     }
                 }
             }
+            if (orderIsOk == true){
+                manager.flush();
+            } else {
+                failedToShipOrderIds.add(order.getId());
+                manager.clear();
+            }
     }
-        return Set.of(); //placeholder
+        return failedToShipOrderIds;
     }
 
 

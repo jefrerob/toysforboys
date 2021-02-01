@@ -1,6 +1,8 @@
 package be.vdab.toysforboys.repositories;
 
 import be.vdab.toysforboys.domain.Order;
+import be.vdab.toysforboys.domain.Product;
+import be.vdab.toysforboys.domain.ProductLine;
 import be.vdab.toysforboys.domain.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -10,24 +12,23 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import javax.persistence.EntityManager;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Sql({"/insertCountry.sql", "/insertCustomer.sql", "/insertOrder.sql"})
+@Sql({"/insertCountry.sql", "/insertCustomer.sql", "/insertOrder.sql","/insertProductLine.sql", "/insertProduct.sql", "/insertOrderDetail.sql"})
 @Import(JpaOrderRepository.class)
 class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     private final JpaOrderRepository repository;
-    private final EntityManager manager;
     private static final String ORDERS = "orders";
 
 
-    public JpaOrderRepositoryTest(JpaOrderRepository repository, EntityManager manager) {
+    public JpaOrderRepositoryTest(JpaOrderRepository repository) {
         this.repository = repository;
-        this.manager = manager;
     }
 
     private long idFromTestUnshippedOrder() {
@@ -61,6 +62,26 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
     @Test
     void findOrdersByIdsGivesEmtySetOrdersWhenSearchingWithUnexistingOrderIds() {
         assertThat(repository.findOrdersByIds(Set.of(-1L))).isEmpty();
+    }
+
+    @Test
+    void testingConectionBetweenOrderAndOrderDetailAndProduct(){
+        long id1 = idFromTestUnshippedOrder();
+        var orders = repository.findOrdersByIds(Set.of(id1));
+        var orderDetails = orders.stream().iterator().next().getOrderDetails();
+        var productName = orderDetails.iterator().next().getProduct().getName();
+        assertThat(productName).isEqualTo("test1");
+        assertThat(productName).isNotEqualTo("test2");
+    }
+
+    @Test
+    void shipOrders(){
+        long id1 = idFromTestShippedOrder();
+        long id2 = idFromTestUnshippedOrder();
+        var orders = repository.findOrdersByIds(Set.of(id1, id2));
+        Set<Long> failedToShipOrderIds =  repository.shipOrders(orders);
+        orders.stream().forEach(order -> assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED));
+        assertThat(failedToShipOrderIds).containsOnly(id1);
     }
 
 
