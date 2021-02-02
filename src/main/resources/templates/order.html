@@ -8,32 +8,34 @@
 <div th:if="${order}" th:object="${order}">
 
 
-    <h1>Order <span th:text="*{id}"></span></h1>
+    <h1>Order <span th:text="*{id}"/></h1>
     <p>Ordered:</p>
-    <p th:text="*{ordered}"></p>
+    <b th:text="*{ordered}"/>
     <p>Required:</p>
-    <p th:text="*{required}"></p>
+    <b th:text="*{required}"/>
     <br/>
+
     <p>Customer:</p>
-        <p th:if="not ${customer}">Custommer not found</p>
+        <b th:if="not ${customer}">Custommer not found</b>
     <div th:if="${customer}" th:object="${customer}">
-        <strong>
+        <b>
         <p th:text="*{name}"></p>
         <p th:text="*{adres.streetAndNumber}"></p>
-        <p><span th:if="*{adres.postalCode}" th:text="*{adres.postalCode}"/> <span th:if="*{adres.city}" th:text="*{adres.city}"/> <span th:if="*{adres.state}" th:text="*{adres.state}"/></p>
+        <p><span th:text="*{adres.postalCode}"/> <span th:text="*{adres.city}"/> <span th:text="*{adres.state}"/></p>
         <p th:if="${country}" th:text="${country.name}"></p>
-        </strong>
+        </b>
     </div>
     <br/>
+
     <p>Comments:</p>
-    <strong th:text="*{comments}"></strong>
+    <b th:text="*{comments}"/>
+    <b th:if="not *{comments}">No comment.</b>
     <br/>
+
     <p>Details:</p>
-    <div th:if="${orderdetails.empty}">You have no orders to ship.</div>
+    <b th:if="${orderdetails.empty}">You have no orders to ship.</b>
 
-
-    <table>
-
+    <table th:if="not ${orderdetails.empty}">
         <tr>
             <th>Product</th>
             <th>Price each</th>
@@ -41,21 +43,16 @@
             <th>Value</th>
             <th>Deliverable</th>
         </tr>
-
         <tr th:each="orderdetail:${orderdetails}" th:object="${orderdetail}">
-            <td th:text="*{product.name}"></td>
-            <td th:text="*{priceEach}"></td>
-            <td th:text="*{ordered}"></td>
-            <td th:text="*{totalPrice}"></td>
+            <td align="right" th:text="*{product.name}"/>
+            <td align="right" th:text="*{{priceEach}}"/>
+            <td align="right" th:text="*{ordered}"/>
+            <td align="right" th:text="*{{totalPrice}}"/>
             <td align="center"><span th:if="*{inStock}">&check;</span><span th:if="not *{inStock}">&cross;</span></td>
-
-
-
         </tr>
-
     </table>
-
-
+        <p>Value:</p>
+        <b th:text="*{{totalOrderPrice}}"/>
 </div>
 </body>
 </html>

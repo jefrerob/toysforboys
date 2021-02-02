@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import javax.persistence.EntityManager;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,10 +23,12 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
 
     private final JpaOrderRepository repository;
     private static final String ORDERS = "orders";
+    private final EntityManager entityManager;
 
 
-    public JpaOrderRepositoryTest(JpaOrderRepository repository) {
+    public JpaOrderRepositoryTest(JpaOrderRepository repository, EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     private long idFromTestUnshippedOrder() {
@@ -75,6 +78,7 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
         long id = idFromTestUnshippedOrder();
         var order = repository.findOrdersByIds(Set.of(id)).iterator().next();
         String succesToShipOrderId = repository.shipOrder(order);
+        entityManager.flush();
         assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED);
         assertThat(succesToShipOrderId).isEqualTo("");
         assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testUnshipped'", Integer.class)).isEqualTo(0);
@@ -89,13 +93,30 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
         assertThat(failToShipOrderId).isEqualTo(order.getId()+ ", ");
         assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testShipped'", Integer.class)).isEqualTo(10);
     }
-  /*  long id1 = idFromTestShippedOrder();
+
+    @Test
+    void findById () {
+        Order order = repository.findById(idFromTestUnshippedOrder()).get();
+        assertThat(order.getComments()).isEqualTo("testUnshipped");
+        assertThat(order.getCustomer().getName()).isEqualTo("test");
+        assertThat(order.getCustomer().getCountry().getName()).isEqualTo("test");
+
+    }
+    @Test
+    void getTotalOrderPrice(){
+        Order order = repository.findById(idFromTestUnshippedOrder()).get();
+        assertThat(order.getTotalOrderPrice()).isEqualTo(order.getOrderDetails().iterator().next().getTotalPrice());
+    }
+
+
+}
+
+  /* (ignore this please)
+    long id1 = idFromTestShippedOrder();
     long id2 = idFromTestUnshippedOrder();
     var orders = repository.findOrdersByIds(Set.of(id1, id2));
     Set<Long> failedToShipOrderIds = repository.shipOrders(orders);
         orders.forEach(order -> assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED));
     assertThat(failedToShipOrderIds).containsOnly(id1);
     assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testUnshipped'", Integer.class)).isEqualTo(0);
-
 */
-}

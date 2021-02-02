@@ -1,5 +1,7 @@
 package be.vdab.toysforboys.domain;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -8,6 +10,7 @@ import java.util.Objects;
 @Access(AccessType.FIELD)
 public class OrderDetail {
     private int ordered;
+    @NumberFormat(pattern = "#,##0.00")
     private BigDecimal priceEach;
     @ManyToOne(optional = false)
     @JoinColumn(name = "productid")
@@ -31,6 +34,7 @@ public class OrderDetail {
         return product;
     }
 
+    @NumberFormat(pattern = "#,##0.00")
     public BigDecimal getTotalPrice() {
         return BigDecimal.valueOf(ordered).multiply(priceEach);
     }

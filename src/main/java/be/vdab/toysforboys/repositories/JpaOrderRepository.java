@@ -5,6 +5,7 @@ import be.vdab.toysforboys.domain.Order;
 import be.vdab.toysforboys.domain.OrderDetail;
 import be.vdab.toysforboys.domain.Status;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.LinkedHashSet;
@@ -55,11 +56,10 @@ public class JpaOrderRepository implements OrderRepository{
             }
             if (orderIsOk == true){
                 order.setStatusToShippedAndShipDate();
-                manager.flush();
                 str = "";
             } else {
                 str = order.getId() + ", ";
-                manager.clear();
+                manager.detach(order);
             }
         return str;
     }

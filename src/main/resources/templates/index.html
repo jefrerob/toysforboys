@@ -2,12 +2,13 @@
 <html lang="nl" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments::head(title='Unshipped orders')"></head>
 <body>
+<script th:src="@{/js/preventDoubleSubmit.js}" defer></script>
 <nav th:replace="fragments::menu"></nav>
 <h1>Unshipped orders</h1>
 <div th:if="${failedToShipOrderIds}">
-    <h3>Shipping failed for order(s) <span th:text="${failedToShipOrderIds}"></span> not enough stock</h3>
+    <h3 class="boodschap">Shipping failed for order(s) <span th:text="${failedToShipOrderIds}"></span> not enough stock</h3>
 </div>
-<div th:if="${orders.empty}">You have no orders to ship.</div>
+<p th:if="${orders.empty}">You have no orders to ship.</p>
 <form th:if="not ${orders.empty}" th:action="@{/orders/setorderstoshipped}" method="post" >
 
     <button>Set as shipped</button>

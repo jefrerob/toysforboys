@@ -46,9 +46,10 @@ public class OrderController {
         if (!ordersToShip.isEmpty()) {
             StringBuilder failedToShipOrderIds = new StringBuilder();
             ordersToShip.forEach(order -> failedToShipOrderIds.append(orderService.shipOrder(order)));
-           if (failedToShipOrderIds.length() > 0)
+           if (failedToShipOrderIds.length() > 0) {
                return new ModelAndView("index", "orders", orderService.findAllUnshippedOrders()).addObject(new OrdersToShipForm(null))
                        .addObject("failedToShipOrderIds", failedToShipOrderIds.toString());
+           }
         }
 
         return new ModelAndView("redirect:/");

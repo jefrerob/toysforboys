@@ -1,8 +1,10 @@
 package be.vdab.toysforboys.domain;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -81,6 +83,10 @@ public class Order {
         return Collections.unmodifiableSet(orderDetails);
     }
 
+    @NumberFormat(style = NumberFormat.Style.NUMBER)
+    public BigDecimal getTotalOrderPrice() {
+        return Collections.unmodifiableSet(orderDetails).stream().map(orderDetail -> orderDetail.getTotalPrice()).reduce(BigDecimal.ZERO, (total, price) -> total.add(price));
+    }
 
     @Override
     public boolean equals(Object o) {

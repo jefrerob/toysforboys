@@ -1,5 +1,7 @@
 package be.vdab.toysforboys.domain;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -18,6 +20,7 @@ public class Product {
     private String description;
     private int inStock;
     private int inOrder;
+    @NumberFormat(pattern = "#,##0.00")
     private BigDecimal price;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "productlineid")
