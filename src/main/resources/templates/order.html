@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title='order')"></head>
+<body >
+<nav th:replace="fragments::menu"></nav>
+<h1 th:if="not ${order}">Order not found</h1>
+
+<div th:if="${order}" th:object="${order}">
+
+
+    <h1>Order <span th:text="*{id}"></span></h1>
+    <p>Ordered:</p>
+    <p th:text="*{ordered}"></p>
+    <p>Required:</p>
+    <p th:text="*{required}"></p>
+    <br/>
+    <p>Customer:</p>
+        <p th:if="not ${customer}">Custommer not found</p>
+    <div th:if="${customer}" th:object="${customer}">
+        <strong>
+        <p th:text="*{name}"></p>
+        <p th:text="*{adres.streetAndNumber}"></p>
+        <p><span th:if="*{adres.postalCode}" th:text="*{adres.postalCode}"/> <span th:if="*{adres.city}" th:text="*{adres.city}"/> <span th:if="*{adres.state}" th:text="*{adres.state}"/></p>
+        <p th:if="${country}" th:text="${country.name}"></p>
+        </strong>
+    </div>
+    <br/>
+    <p>Comments:</p>
+    <strong th:text="*{comments}"></strong>
+    <br/>
+    <p>Details:</p>
+    <div th:if="${orderdetails.empty}">You have no orders to ship.</div>
+
+
+
+
+
+</div>
+</body>
+</html>

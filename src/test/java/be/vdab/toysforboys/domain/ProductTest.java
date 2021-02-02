@@ -24,10 +24,4 @@ class ProductTest {
         assertThat(product.getInOrder()).isEqualTo(5);
     }
 
-    @Test
-    void loweringInStockAndInOrderByTooMuchThrowsIllegalArgumentException() {
-        int ordered = 11;
-        assertThatIllegalArgumentException().isThrownBy(() ->product.lowerInStockAndInOrder(ordered));
-    }
-
 }

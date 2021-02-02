@@ -1,9 +1,6 @@
 package be.vdab.toysforboys.repositories;
 
-import be.vdab.toysforboys.domain.Order;
-import be.vdab.toysforboys.domain.Product;
-import be.vdab.toysforboys.domain.ProductLine;
-import be.vdab.toysforboys.domain.Status;
+import be.vdab.toysforboys.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
@@ -56,33 +53,49 @@ class JpaOrderRepositoryTest extends AbstractTransactionalJUnit4SpringContextTes
     }
 
     @Test
-    void findOrdersByIdsGivesEmtySetOrdersWhenSearchingWithEmptySetOfIds() {
+    void findOrdersByIdsGivesEmptySetOrdersWhenSearchingWithEmptySetOfIds() {
         assertThat(repository.findOrdersByIds(Set.of())).isEmpty();
     }
     @Test
-    void findOrdersByIdsGivesEmtySetOrdersWhenSearchingWithUnexistingOrderIds() {
+    void findOrdersByIdsGivesEmptySetOrdersWhenSearchingWithUnexistingOrderIds() {
         assertThat(repository.findOrdersByIds(Set.of(-1L))).isEmpty();
     }
 
     @Test
-    void testingConectionBetweenOrderAndOrderDetailAndProduct(){
+    void testingConnectionBetweenOrderAndOrderDetailAndProduct(){
         long id1 = idFromTestUnshippedOrder();
-        var orders = repository.findOrdersByIds(Set.of(id1));
-        var orderDetails = orders.stream().iterator().next().getOrderDetails();
+        var orderDetails = repository.findOrdersByIds(Set.of(id1)).iterator().next().getOrderDetails();
         var productName = orderDetails.iterator().next().getProduct().getName();
-        assertThat(productName).isEqualTo("test1");
-        assertThat(productName).isNotEqualTo("test2");
+        assertThat(productName).isEqualTo("testUnshipped");
+        assertThat(productName).isNotEqualTo("testShipped");
     }
 
     @Test
-    void shipOrders(){
-        long id1 = idFromTestShippedOrder();
-        long id2 = idFromTestUnshippedOrder();
-        var orders = repository.findOrdersByIds(Set.of(id1, id2));
-        Set<Long> failedToShipOrderIds =  repository.shipOrders(orders);
-        orders.stream().forEach(order -> assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED));
-        assertThat(failedToShipOrderIds).containsOnly(id1);
+    void shipOrderSucces(){
+        long id = idFromTestUnshippedOrder();
+        var order = repository.findOrdersByIds(Set.of(id)).iterator().next();
+        String succesToShipOrderId = repository.shipOrder(order);
+        assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED);
+        assertThat(succesToShipOrderId).isEqualTo("");
+        assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testUnshipped'", Integer.class)).isEqualTo(0);
     }
 
+    @Test
+    void shipOrderFail() {
+        long id = idFromTestShippedOrder();
+        var order = repository.findOrdersByIds(Set.of(id)).iterator().next();
+        String failToShipOrderId = repository.shipOrder(order);
+        assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED);
+        assertThat(failToShipOrderId).isEqualTo(order.getId()+ ", ");
+        assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testShipped'", Integer.class)).isEqualTo(10);
+    }
+  /*  long id1 = idFromTestShippedOrder();
+    long id2 = idFromTestUnshippedOrder();
+    var orders = repository.findOrdersByIds(Set.of(id1, id2));
+    Set<Long> failedToShipOrderIds = repository.shipOrders(orders);
+        orders.forEach(order -> assertThat(order.getStatus()).isEqualByComparingTo(Status.SHIPPED));
+    assertThat(failedToShipOrderIds).containsOnly(id1);
+    assertThat(super.jdbcTemplate.queryForObject("select instock from products where name = 'testUnshipped'", Integer.class)).isEqualTo(0);
 
+*/
 }

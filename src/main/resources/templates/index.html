@@ -4,8 +4,11 @@
 <body>
 <nav th:replace="fragments::menu"></nav>
 <h1>Unshipped orders</h1>
-<div th:if="${orders.empty}">Je hebt geen orders om te shippen.</div>
-<form th:if="not ${orders.empty}" th:action="@{/orders/setorderstoshipped}" method="post">
+<div th:if="${failedToShipOrderIds}">
+    <h3>Shipping failed for order(s) <span th:text="${failedToShipOrderIds}"></span> not enough stock</h3>
+</div>
+<div th:if="${orders.empty}">You have no orders to ship.</div>
+<form th:if="not ${orders.empty}" th:action="@{/orders/setorderstoshipped}" method="post" >
 
     <button>Set as shipped</button>
 
@@ -23,7 +26,7 @@
 
         <tr th:each="order:${orders}" th:object="${order}">
             <td align="right">
-                <a th:href="@{/order/{id}(id=*{id})}">
+                <a th:href="@{/orders/{id}(id=*{id})}">
                     <span th:text="*{id}"></span>
                 </a>
             </td>

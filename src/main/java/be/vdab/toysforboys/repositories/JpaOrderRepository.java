@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -36,16 +37,13 @@ public class JpaOrderRepository implements OrderRepository{
     }
 
     @Override
-    public Set<Long> shipOrders(List<Order> orders) {
-        Set<Long> failedToShipOrderIds = new LinkedHashSet<>();
-
-        for (Order order : orders) {
+    public String shipOrder(Order order) {
+        String str;
             Set<OrderDetail> orderDetails = order.getOrderDetails();
             boolean orderIsOk = true;
             if (order.getStatus() == Status.CANCELLED || order.getStatus() == Status.SHIPPED || orderDetails.isEmpty()){
                 orderIsOk = false;
             } else {
-                order.setStatusToShippedAndShipDate();
                 for (OrderDetail orderDetail : orderDetails) {
                     if (orderDetail.isInStock()) {
                         orderDetail.getProduct().lowerInStockAndInOrder(orderDetail.getOrdered());
@@ -56,15 +54,18 @@ public class JpaOrderRepository implements OrderRepository{
                 }
             }
             if (orderIsOk == true){
+                order.setStatusToShippedAndShipDate();
                 manager.flush();
+                str = "";
             } else {
-                failedToShipOrderIds.add(order.getId());
+                str = order.getId() + ", ";
                 manager.clear();
             }
+        return str;
     }
-        return failedToShipOrderIds;
+
+    @Override
+    public Optional<Order> findById(long id) {
+        return Optional.ofNullable(manager.find(Order.class, id));
     }
-
-
-
 }

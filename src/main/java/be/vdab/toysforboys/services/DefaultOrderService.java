@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,6 +32,16 @@ public class DefaultOrderService implements OrderService{
         return orderRepository.findOrdersByIds(ids);
     }
 
+    @Override
+    public String shipOrder(Order order){
+        return orderRepository.shipOrder(order);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Order> findById(long id) {
+        return orderRepository.findById(id);
+    }
 
 
 }
