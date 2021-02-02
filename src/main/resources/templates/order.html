@@ -32,7 +32,28 @@
     <div th:if="${orderdetails.empty}">You have no orders to ship.</div>
 
 
+    <table>
 
+        <tr>
+            <th>Product</th>
+            <th>Price each</th>
+            <th>Quantity</th>
+            <th>Value</th>
+            <th>Deliverable</th>
+        </tr>
+
+        <tr th:each="orderdetail:${orderdetails}" th:object="${orderdetail}">
+            <td th:text="*{product.name}"></td>
+            <td th:text="*{priceEach}"></td>
+            <td th:text="*{ordered}"></td>
+            <td th:text="*{totalPrice}"></td>
+            <td align="center"><span th:if="*{inStock}">&check;</span><span th:if="not *{inStock}">&cross;</span></td>
+
+
+
+        </tr>
+
+    </table>
 
 
 </div>
